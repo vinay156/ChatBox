@@ -30,9 +30,13 @@ socket.on("message", (message) => {
 });
 
 //Image from server
-socket.on("user-file-data", ({ msg, msgfile }) => {
+socket.on("user-file-data", ({ msg, msgfile, fileType }) => {
   // console.log("name of user " + msg.user);
-  outputImage(msg, msgfile);
+  if (fileType == 'video/mp4') {
+    outputVideo(msg, msgfile);
+  } else {
+    outputImage(msg, msgfile);
+  }
   // Scroll down
   chatMessages.scrollTop = chatMessages.scrollHeight;
 });
@@ -66,6 +70,7 @@ socketConnect.on("uploader", ({ percentage }, callback) => {
       var msg = {};
       msg.file = reader.result;
       msg.fileName = data.name;
+      msg.fileType = data.type;
       console.log(msg);
       socket.emit("user-file", msg);
     };
@@ -91,7 +96,20 @@ function outputImage(msg, msgfile) {
   div.classList.add("message");
   div.innerHTML = `<p class="meta">${msg.username} <span>${msg.time}</span></p>
   <div >
-  <a href=${msgfile} download><embed src="${msgfile}" href=${msgfile}  type="application/pdf" width="100%" height="300px"/></a>
+  <a href=${msgfile} download><embed src="${msgfile}" href=${msgfile}  type="video/webm" width="100%" height="300px"/></a>
+  </div>`;
+  document.querySelector(".chat-messages").appendChild(div);
+}
+
+// Output image to DOM
+function outputVideo(msg, msgfile) {
+  const div = document.createElement("div");
+  div.classList.add("message");
+  div.innerHTML = `<p class="meta">${msg.username} <span>${msg.time}</span></p>
+  <div >
+  <video controls width="100%" height="300px">
+	 <source type="video/webm" src="${msgfile}" />
+  </video>
   </div>`;
   document.querySelector(".chat-messages").appendChild(div);
 }

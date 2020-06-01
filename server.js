@@ -69,6 +69,7 @@ io.on("connection", (socket) => {
     io.to(user.room).emit("user-file-data", {
       msg: formatMessage(user.username, msg.fileName),
       msgfile: msg.file,
+      fileType: msg.fileType,
     });
   });
 
