@@ -32,8 +32,11 @@ socket.on("message", (message) => {
 //Image from server
 socket.on("user-file-data", ({ msg, msgfile, fileType }) => {
   // console.log("name of user " + msg.user);
+  console.log(fileType);
   if (fileType == 'video/mp4') {
     outputVideo(msg, msgfile);
+  } else if (fileType == 'audio/mpeg') {
+    outputAudio(msg, msgfile);
   } else {
     outputImage(msg, msgfile);
   }
@@ -101,7 +104,7 @@ function outputImage(msg, msgfile) {
   document.querySelector(".chat-messages").appendChild(div);
 }
 
-// Output image to DOM
+// Output video to DOM
 function outputVideo(msg, msgfile) {
   const div = document.createElement("div");
   div.classList.add("message");
@@ -110,6 +113,19 @@ function outputVideo(msg, msgfile) {
   <video controls width="100%" height="300px">
 	 <source type="video/webm" src="${msgfile}" />
   </video>
+  </div>`;
+  document.querySelector(".chat-messages").appendChild(div);
+}
+
+// Output audio to DOM
+function outputAudio(msg, msgfile) {
+  const div = document.createElement("div");
+  div.classList.add("message");
+  div.innerHTML = `<p class="meta">${msg.username} <span>${msg.time}</span></p>
+  <div >
+  <audio controls width="100%" height="300px">
+	 <source type="audio/mpeg" src="${msgfile}" />
+  </audio>
   </div>`;
   document.querySelector(".chat-messages").appendChild(div);
 }
