@@ -3,6 +3,7 @@ const http = require("http");
 const express = require("express");
 const socketio = require("socket.io");
 const formatMessage = require("./utils/messages");
+var siofu = require("socketio-file-upload");
 const {
   userJoin,
   getCurrentUser,
@@ -11,6 +12,7 @@ const {
 } = require("./utils/users");
 
 const app = express();
+app.use(siofu.router);
 const server = http.createServer(app);
 const io = socketio(server);
 
@@ -37,21 +39,36 @@ io.on("connection", (socket) => {
         formatMessage(botName, `${user.username} has joined the chat`)
       );
 
-    //Send image
-    socket.on("user image", function (msg) {
-      const user = getCurrentUser(socket.id);
-      console.log("image data send to server " + msg.file);
-      console.log("filename " + msg.fileName);
-      io.to(user.room).emit("user-image", {
-        msg: formatMessage(user.username, msg.fileName),
-        msgfile: msg.file,
-      });
-    });
-
     // Send users and room info
     io.to(user.room).emit("roomUsers", {
       room: user.room,
       users: getRoomUsers(user.room),
+    });
+  });
+
+  //Uploader Information
+  var uploader = new siofu();
+  // uploader.dir = __dirname + "/uploads/images/";
+  uploader.listen(socket);
+  uploader.on("progress", function (event) {
+    console.log(event.file.bytesLoaded / event.file.size);
+    socket.emit(
+      "uploader",
+      {
+        percentage: (event.file.bytesLoaded / event.file.size) * 100,
+      },
+      (message) => {
+        console.log(message);
+      }
+    );
+  });
+
+  //Send image
+  socket.on("user-file", function (msg) {
+    const user = getCurrentUser(socket.id);
+    io.to(user.room).emit("user-file-data", {
+      msg: formatMessage(user.username, msg.fileName),
+      msgfile: msg.file,
     });
   });
 

@@ -41,14 +41,12 @@
         </form>
       </div>
       <div class="image-form-container">
-        <form id="image-form">
           <input
-            id="img"
+            id="image-input"
             type="file"
-            accept="image*"
+            accept = "file_extension | audio/* | video/* | image/* | media_type"
           />
-          <button class="btn"><i class="fas fa-paper-plane"></i> Send image</button>
-        </form>
+          <button id="image-send-button"class="btn"><i class="fas fa-paper-plane"></i> Send image</button>
       </div>
 
     <script
@@ -56,6 +54,7 @@
       integrity="sha256-TDxXjkAUay70ae/QJBEpGKkpVslXaHHayklIVglFRT4="
       crossorigin="anonymous"
     ></script>
+    <script src="/siofu/client.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/main.js"></script>
   </body>
