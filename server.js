@@ -23,8 +23,11 @@ const botName = "ChatCord Bot";
 
 // Run when client connects
 io.on("connection", (socket) => {
-  socket.on("joinRoom", ({ username, room }) => {
-    const user = userJoin(socket.id, username, room);
+  socket.on("joinRoom", ({ username, room }, callback) => {
+    const { error, user } = userJoin(socket.id, username, room);
+    if (error) {
+      return callback(error);
+    }
 
     socket.join(user.room);
 
@@ -48,10 +51,8 @@ io.on("connection", (socket) => {
 
   //Uploader Information
   var uploader = new siofu();
-  // uploader.dir = __dirname + "/uploads/images/";
   uploader.listen(socket);
   uploader.on("progress", function (event) {
-    console.log(event.file.bytesLoaded / event.file.size);
     socket.emit(
       "uploader",
       {

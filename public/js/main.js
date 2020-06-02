@@ -14,7 +14,12 @@ const socketConnect = io.connect();
 var uploader = new SocketIOFileUpload(socketConnect);
 
 // Join chatroom
-socket.emit("joinRoom", { username, room });
+socket.emit("joinRoom", { username, room }, (error) => {
+  if (error) {
+    alert(error);
+    location.href = "/";
+  }
+});
 
 // Get room and users
 socket.on("roomUsers", ({ room, users }) => {
@@ -29,13 +34,12 @@ socket.on("message", (message) => {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 });
 
-//Image from server
+//File data from server
 socket.on("user-file-data", ({ msg, msgfile, fileType }) => {
-  // console.log("name of user " + msg.user);
   console.log(fileType);
-  if (fileType == 'video/mp4') {
+  if (fileType == "video/mp4") {
     outputVideo(msg, msgfile);
-  } else if (fileType == 'audio/mpeg') {
+  } else if (fileType == "audio/mpeg") {
     outputAudio(msg, msgfile);
   } else {
     outputImage(msg, msgfile);
@@ -56,16 +60,15 @@ chatForm.addEventListener("submit", (e) => {
   e.target.elements.msg.focus();
 });
 
-//image submit
+//File submit to server
 const $image_send_btn = document.getElementById("image-send-button");
 const $image_input = document.getElementById("image-input");
 
 uploader.listenOnSubmit($image_send_btn, $image_input);
 
 // socket.on('upload.progress')
-socketConnect.on("uploader", ({ percentage }, callback) => {
+socketConnect.on("uploader", ({ percentage }) => {
   console.log(percentage);
-
   if (percentage == 100) {
     var data = $image_input.files[0];
     var reader = new FileReader();
@@ -78,8 +81,11 @@ socketConnect.on("uploader", ({ percentage }, callback) => {
       socket.emit("user-file", msg);
     };
     reader.readAsDataURL(data);
+    document.getElementById("chat-msg").innerHTML = "";
+  } else {
+    document.getElementById("chat-msg").innerHTML = "Loading...";
+    document.getElementById("chat-msg").style.textAlign = "center";
   }
-  callback("LOL");
 });
 
 // Output message to DOM
@@ -99,7 +105,7 @@ function outputImage(msg, msgfile) {
   div.classList.add("message");
   div.innerHTML = `<p class="meta">${msg.username} <span>${msg.time}</span></p>
   <div >
-  <a href=${msgfile} download><embed src="${msgfile}" href=${msgfile}  type="video/webm" width="100%" height="300px"/></a>
+  <a href=${msgfile} download><embed src="${msgfile}" type="video/webm" width="100%" height="300px"/></a>
   </div>`;
   document.querySelector(".chat-messages").appendChild(div);
 }
