@@ -77,7 +77,6 @@ io.on("connection", (socket) => {
   // Listen for chatMessage
   socket.on("chatMessage", (msg) => {
     const user = getCurrentUser(socket.id);
-    console.log("chat message");
 
     io.to(user.room).emit("message", formatMessage(user.username, msg));
   });

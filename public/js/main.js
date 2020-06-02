@@ -67,6 +67,7 @@ const $image_input = document.getElementById("image-input");
 uploader.listenOnSubmit($image_send_btn, $image_input);
 
 // socket.on('upload.progress')
+var loaded = false;
 socketConnect.on("uploader", ({ percentage }) => {
   console.log(percentage);
   if (percentage == 100) {
@@ -81,10 +82,15 @@ socketConnect.on("uploader", ({ percentage }) => {
       socket.emit("user-file", msg);
     };
     reader.readAsDataURL(data);
-    document.getElementById("chat-msg").innerHTML = "";
-  } else {
-    document.getElementById("chat-msg").innerHTML = "Loading...";
-    document.getElementById("chat-msg").style.textAlign = "center";
+    loaded = false;
+
+    var element = document.getElementById("loading");
+    element.parentNode.removeChild(element);
+  } else if (loaded === false) {
+    loaded = true;
+    document
+      .getElementById("chat-msg")
+      .insertAdjacentHTML("beforeend", "<h3 id='loading'>Loading...</h3>");
   }
 });
 
