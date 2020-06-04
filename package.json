@@ -1,0 +1,29 @@
+{
+  "name": "chatcord",
+  "version": "1.0.0",
+  "description": "Realtime chat app with websockets using Node.js, Express and Socket.io with Vanilla JS on the frontend with a custom UI",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "moment": "^2.26.0",
+    "socket.io": "^2.3.0",
+    "socketio-file-upload": "^0.7.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "scripts": {
+    "start": "node server",
+    "dev": "nodemon server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bradtraversy/chatcord.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bradtraversy/chatcord/issues"
+  },
+  "homepage": "https://github.com/bradtraversy/chatcord#readme"
+}
