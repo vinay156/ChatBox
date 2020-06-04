@@ -37,9 +37,9 @@ socket.on("message", (message) => {
 //File data from server
 socket.on("user-file-data", ({ msg, msgfile, fileType }) => {
   console.log(fileType);
-  if (fileType == "video/mp4") {
+  if (fileType == "video/mp4" || fileType == "video/webm") {
     outputVideo(msg, msgfile);
-  } else if (fileType == "audio/mpeg") {
+  } else if (fileType == "audio/mpeg" || fileType == "audio/ogg") {
     outputAudio(msg, msgfile);
   } else {
     outputImage(msg, msgfile);
@@ -107,23 +107,25 @@ function outputMessage(message) {
 
 // Output image to DOM
 function outputImage(msg, msgfile) {
+  console.log(msg);
   const div = document.createElement("div");
   div.classList.add("message");
   div.innerHTML = `<p class="meta">${msg.username} <span>${msg.time}</span></p>
   <div >
-  <a href=${msgfile} download><embed src="${msgfile}" type="video/webm" width="100%" height="300px"/></a>
+  <a href=${msgfile} download><embed src="${msgfile}" width="100%" height="300px"/></a>
   </div>`;
   document.querySelector(".chat-messages").appendChild(div);
 }
 
 // Output video to DOM
 function outputVideo(msg, msgfile) {
+  console.log(msg);
   const div = document.createElement("div");
   div.classList.add("message");
   div.innerHTML = `<p class="meta">${msg.username} <span>${msg.time}</span></p>
   <div >
   <video controls width="100%" height="300px">
-	 <source type="video/webm" src="${msgfile}" />
+	 <source type="video/mp4" src="${msgfile}" />
   </video>
   </div>`;
   document.querySelector(".chat-messages").appendChild(div);
@@ -131,6 +133,7 @@ function outputVideo(msg, msgfile) {
 
 // Output audio to DOM
 function outputAudio(msg, msgfile) {
+  console.log(msg);
   const div = document.createElement("div");
   div.classList.add("message");
   div.innerHTML = `<p class="meta">${msg.username} <span>${msg.time}</span></p>
