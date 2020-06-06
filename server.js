@@ -1,3 +1,4 @@
+const S3 = require("aws-s3");
 const path = require("path");
 const http = require("http");
 const express = require("express");
