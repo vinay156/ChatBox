@@ -4,6 +4,7 @@ const express = require("express");
 const socketio = require("socket.io");
 const formatMessage = require("./utils/messages");
 var siofu = require("socketio-file-upload");
+var FormData = require('form-data');
 const {
   userJoin,
   getCurrentUser,
@@ -11,6 +12,10 @@ const {
   getRoomUsers,
 } = require("./utils/users");
 
+
+var s = new FormData();
+
+// Express Server
 const app = express();
 app.use(siofu.router);
 const server = http.createServer(app);
@@ -23,7 +28,6 @@ const botName = "ChatCord Bot";
 
 // Run when client connects
 io.on("connection", (socket) => {
-  // console.log("New user is connected");
   socket.on("joinRoom", ({ username, room }, callback) => {
     const { error, user } = userJoin(socket.id, username, room);
     if (error) {
@@ -52,10 +56,8 @@ io.on("connection", (socket) => {
 
   //Uploader Information
   var uploader = new siofu();
-  // uploader.dir = __dirname + "/uploads/images/";
   uploader.listen(socket);
   uploader.on("progress", function (event) {
-    // console.log(event.file.bytesLoaded / event.file.size);
     socket.emit(
       "uploader",
       {
@@ -69,6 +71,8 @@ io.on("connection", (socket) => {
 
   //Send image
   socket.on("user-file", function (msg) {
+    file = msg.file,
+    newFileName = msg.fileName
     const user = getCurrentUser(socket.id);
     io.to(user.room).emit("user-file-data", {
       msg: formatMessage(user.username, msg.fileName),

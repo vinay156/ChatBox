@@ -4,7 +4,12 @@
   "description": "Realtime chat app with websockets using Node.js, Express and Socket.io with Vanilla JS on the frontend with a custom UI",
   "main": "server.js",
   "dependencies": {
+    "@babel/preset-env": "^7.10.2",
+    "aws-s3": "^2.0.5",
+    "aws-sdk": "^2.691.0",
     "express": "^4.17.1",
+    "form-data": "^3.0.0",
+    "fs": "0.0.1-security",
     "moment": "^2.26.0",
     "socket.io": "^2.3.0",
     "socketio-file-upload": "^0.7.2"

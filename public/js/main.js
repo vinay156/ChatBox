@@ -4,6 +4,20 @@ const roomName = document.getElementById("room-name");
 const userList = document.getElementById("users");
 const imageform = document.getElementById("image-form");
 
+
+//AWS S3 file upload
+// const S3 = require('aws-s3');
+import S3 from 'aws-s3';
+const config = {
+    bucketName: 'webrctcbucket',
+    dirName: 'files',
+    region: 'Asia Pacific (Mumbai)',
+    accessKeyId: "AKIA3NKZZ4AC25HYML42",
+    secretAccessKey: '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',
+}
+const S3Client = new S3(config);
+
+
 // Get username and room from URL
 const { username, room } = Qs.parse(location.search, {
   ignoreQueryPrefix: true,
@@ -79,8 +93,17 @@ socketConnect.on("uploader", ({ percentage }) => {
       msg.fileName = data.name;
       msg.fileType = data.type;
       console.log(msg);
-      socket.emit("user-file", msg);
+
+      file= msg.file,
+      newFileName = msg.fileName
+      S3Client.uploadFile(file, newFileName).then(
+        socket.emit("user-file", msg),
+        data => console.log(data)
+        ).catch(
+          err => console.error(err)
+        )
     };
+    console.log("hellllllloooo")
     reader.readAsDataURL(data);
     loaded = false;
 
@@ -107,6 +130,7 @@ function outputMessage(message) {
 
 // Output image to DOM
 function outputImage(msg, msgfile) {
+  console.log(msg)
   const div = document.createElement("div");
   div.classList.add("message");
   div.innerHTML = `<p class="meta">${msg.username} <span>${msg.time}</span></p>
@@ -118,6 +142,7 @@ function outputImage(msg, msgfile) {
 
 // Output video to DOM
 function outputVideo(msg, msgfile) {
+  console.log(msg)
   const div = document.createElement("div");
   div.classList.add("message");
   div.innerHTML = `<p class="meta">${msg.username} <span>${msg.time}</span></p>
@@ -131,6 +156,7 @@ function outputVideo(msg, msgfile) {
 
 // Output audio to DOM
 function outputAudio(msg, msgfile) {
+  console.log(msg)
   const div = document.createElement("div");
   div.classList.add("message");
   div.innerHTML = `<p class="meta">${msg.username} <span>${msg.time}</span></p>
